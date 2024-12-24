@@ -14,6 +14,14 @@ type FightQuery struct {
 	}
 }
 
+type FightPlayers struct {
+	ReportData struct {
+		Report struct {
+			PlayerDetails PlayerDetails `graphql:"playerDetails(fightIDs: $fightID)" scalar:"true"`
+		} `graphql:"report(code: $code)"`
+	}
+}
+
 type Report struct {
 	Title  string
 	Fights []Fight
@@ -69,4 +77,23 @@ type Data struct {
 	BonusPercent        int     `json:"bonusPercent,omitempty"`
 	Stack               int     `json:"stack,omitempty"`
 	ExtraInfo           int     `json:"extraInfo,omitempty"`
+}
+
+type PlayerDetails struct {
+	Data struct {
+		PlayerDetails struct {
+			DPS     []PlayerDetail `scalar:"true"`
+			Healers []PlayerDetail `scalar:"true"`
+			Tanks   []PlayerDetail `scalar:"true"`
+		}
+	}
+}
+
+type PlayerDetail struct {
+	Name   string `json:"name"`
+	ID     int
+	GUID   int
+	Type   string
+	Server string
+	Icon   string
 }

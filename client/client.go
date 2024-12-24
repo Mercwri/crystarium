@@ -75,6 +75,23 @@ func (c *Crystarium) GetReport(code string) (reportdata.Report, error) {
 	return query.ReportData.Report, nil
 }
 
+func (c *Crystarium) GetFightPlayers(report reportdata.Report, id int) ([]reportdata.PlayerDetail, error) {
+	var players []reportdata.PlayerDetail
+	var query reportdata.FightPlayers
+	vars := map[string]interface{}{
+		"code":    graphql.String(report.Code),
+		"fightID": []graphql.Int{graphql.Int(id)},
+	}
+	err := c.QGL.Query(context.Background(), &query, vars)
+	if err != nil {
+		return players, err
+	}
+	players = append(players, query.ReportData.Report.PlayerDetails.Data.PlayerDetails.DPS...)
+	players = append(players, query.ReportData.Report.PlayerDetails.Data.PlayerDetails.Healers...)
+	players = append(players, query.ReportData.Report.PlayerDetails.Data.PlayerDetails.Tanks...)
+	return players, nil
+}
+
 func (c *Crystarium) GetFightEvents(report reportdata.Report, id int) ([]reportdata.Data, error) {
 	var events []reportdata.Data
 	var query reportdata.FightQuery
